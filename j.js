@@ -36,6 +36,8 @@ var builds = { targets: [],
 
 function addTarget(target)
 {
+    if (typeof target.sources == "string")
+        target.sources = target.sources.split(/[ ,]+/);
     builds.targets.push(target);
     console.log(JSON.stringify(builds));
 }

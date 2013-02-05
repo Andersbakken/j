@@ -75,14 +75,30 @@ module.exports = {
         o.push(nin._linkRule("cxxlink", cxx, "ldflags"));
         for (i in obj.targets) {
             var t = obj.targets[i];
+            var cxxf = t.cxxflags;
+            var cf = t.cflags;
             var all = "";
             for (var s in t.sources) {
                 var source = t.sources[s];
                 if (typeof source === "string") {
-                    o.push(nin._build({source: source}));
+                    o.push(nin._build({source: source, flags: { cxxflags: cxxf, cflags: cf}}));
                     all += source + ".o ";
                 } else if (typeof source === "object") {
-                    o.push(nin._build({source: source.source, flags: { cxxflags: source.cxxflags, cflags: source.cflags }}));
+                    var lcxxf = cxxf;
+                    var lcf = cf;
+                    if (source.cxxflags) {
+                        if (lcxxf)
+                            lcxxf += " " + source.cxxflags;
+                        else
+                            lcxxf = source.cxxflags;
+                    }
+                    if (source.cflags) {
+                        if (lcf)
+                            lcf += " " + source.cflags;
+                        else
+                            lcf = source.cflags;
+                    }
+                    o.push(nin._build({source: source.source, flags: { cxxflags: lcxxf, cflags: lcf }}));
                     all += source.source + ".o ";
                 }
             }

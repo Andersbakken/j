@@ -1,9 +1,9 @@
 CXXFLAGS += "-I/usr/include/biff/";
-LDFLAGS += "-lbiff";
 
-addLibrary({name:"kaploik",
+addLibrary({name:"biff",
             sources:"lib.cpp",
             cxxflags:"-g -I."});
 addApplication({ sources:"main.cpp,foo.cpp",
                  name:"appsilon",
+                 ldflags:"-lbiff",
                  cxxflags:"-g -O3" });

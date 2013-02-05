@@ -85,4 +85,4 @@ module.exports = {
     }
 };
 
-console.log(module.exports.generate({cxxflags: "-I hepp", targets: [{name: "test", sources: ["a.cpp", {source: "b.cpp", cxxflags: "-I ting" }]}]}));
+//console.log(module.exports.generate({cxxflags: "-I hepp", targets: [{name: "test", sources: ["a.cpp", {source: "b.cpp", cxxflags: "-I ting" }]}]}));

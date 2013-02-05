@@ -9,7 +9,7 @@ function NinjaInternals()
     };
     this._linkRule = function(name, command, flags) {
         return "rule " + name + "\n" +
-            "  command = " + command + " $" + flags + " $in -o $out\n";
+            "  command = " + command + " $in -o $out $" + flags + "\n";
     };
     this._build = function(t) {
         var o = [];
@@ -86,7 +86,9 @@ module.exports = {
                     all += source.source + ".o ";
                 }
             }
-            o.push(nin._build({source: all, flags: { ldflags: source.ldflags }, rule: nin.linker, target: t.name}));
+            if (t.depends)
+                all += "| " + t.depends;
+            o.push(nin._build({source: all, flags: { ldflags: t.ldflags }, rule: nin.linker, target: t.name}));
         }
         return nin._string(o);
     }

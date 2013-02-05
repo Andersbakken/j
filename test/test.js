@@ -1,9 +1,11 @@
 CXXFLAGS += "-I/usr/include/biff/";
 
-addLibrary({name:"biff",
+addLibrary({name:"libbiff.so",
             sources:"lib.cpp",
-            cxxflags:"-g -I."});
+            cxxflags:"-g -I.",
+            ldflags:"-shared"});
 addApplication({ sources:"main.cpp,foo.cpp",
                  name:"appsilon",
-                 ldflags:"-lbiff",
-                 cxxflags:"-g -O3" });
+                 ldflags:"-L. -lbiff",
+                 cxxflags:"-g -O3",
+                 depends:"libbiff.so"});

@@ -5,13 +5,13 @@ function NinjaInternals()
     this._rule = function(name, command, flags) {
         return "rule " + name + "\n" +
                "  depfile = $out.d\n" +
-               "  command = " + command + " $" + flags + " -c $in -o $out -MMD -MF $out.d";
+               "  command = " + command + " $" + flags + " -c $in -o $out -MMD -MF $out.d\n";
     };
     this._build = function(t) {
         var o = [];
         var r = this._guessRule(t.source) || t.rule;
 
-        var tn = t.target || t.source;
+        var tn = t.target || (t.source + ".o");
         if (!r) {
             console.log("Unknown rule for " + t.source);
             return "";
@@ -19,7 +19,7 @@ function NinjaInternals()
         if (r === "cxx")
             this.linker = "cxx";
 
-        o.push("build " + tn + ".o: " + r + " " + t.source);
+        o.push("build " + tn + ": " + r + " " + t.source);
         for (var i in t.flags) {
             if (t.flags[i])
                 o.push("  " + i + " = " + t.flags[i]);
@@ -85,4 +85,4 @@ module.exports = {
     }
 };
 
-//console.log(module.exports.generate({cxxflags: "-I hepp", targets: [{name: "test", sources: ["a.cpp", {source: "b.cpp", cxxflags: "-I ting" }]}]}));
+console.log(module.exports.generate({cxxflags: "-I hepp", targets: [{name: "test", sources: ["a.cpp", {source: "b.cpp", cxxflags: "-I ting" }]}]}));

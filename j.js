@@ -77,6 +77,7 @@ function build(file, output, generator)
         builds.cxxflags = CFLAGS;
     if (typeof LDFLAGS == "string" && LDFLAGS.length)
         builds.cxxflags = LDFLAGS;
+    builds.j = file;
     var out = gen.generate(builds);
     if (typeof out == "string" && out.length) {
         if (fs.statSync(output).isDirectory())

@@ -49,6 +49,7 @@ function NinjaInternals()
 };
 
 module.exports = {
+    fileName: "build.ninja",
     generate: function(obj) {
         var nin = new NinjaInternals();
 

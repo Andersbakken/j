@@ -79,6 +79,9 @@ function build(file, output, generator)
         builds.cxxflags = LDFLAGS;
     var out = gen.generate(builds);
     if (typeof out == "string" && out.length) {
+        if (fs.statSync(output).isDirectory())
+            output += '/' + gen.fileName;
+
         fs.writeFileSync(output, out);
         console.log("Wrote output to " + output);
     }

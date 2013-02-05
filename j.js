@@ -9,11 +9,10 @@ var output = "./build.ninja";
 
 for (var i=2; i<process.argv.length; ++i) {
     var arg = process.argv[i];
-    if (arg == "-h" || arg == "--help" || arg == "-help") {
-        console.log("j\n" +
-                    "Usage: j [options] projectfile.js\n" +
+    if (arg == "-h" || arg == "--help") {
+        console.log("Usage: j [options] projectfile.js\n" +
                     "Options:\n" +
-                    "  --help|-h|-help:                 Display this help\n" +
+                    "  --help|-h:                       Display this help\n" +
                     "  --output|-o [arg]                Output to this file (default ./build.ninja|./Makefile)\n" +
                     "  --generator|-g [generator]       Use this generator (default is ninja)\n");
         project = undefined;
@@ -39,7 +38,7 @@ function addTarget(target)
     if (typeof target.sources == "string")
         target.sources = target.sources.split(/[ ,]+/);
     builds.targets.push(target);
-    console.log(JSON.stringify(builds));
+    // console.log(JSON.stringify(builds));
 }
 function addLibrary(target)
 {
@@ -80,26 +79,7 @@ function build(file, output, generator)
         builds.cxxflags = LDFLAGS;
     var out = gen.generate(builds);
     if (typeof out == "string" && out.length) {
-        fs.writeFileSync(output);
+        fs.writeFileSync(output, out);
         console.log("Wrote output to " + output);
     }
-    // console.log(JSON.stringify(builds));
-    // console.log(JSON.stringify(out));
 }
-// fs.readFile(file, [encoding], [callback]);
-
-// output:
-// var target = {
-//     name:"test",
-//     SOURCES: ['main.cpp', 'foo.cpp', {source:test.cpp, CXXFLAGS:"-g $CXXFLAGS"}, {source:utenstandardflags.cpp, CXXFLAGS:"-O3"} ],
-//     CXXFLAGS: "-O2",
-//     type:"library"
-// }
-// syntax:
-
-// SOURCES += "main.cpp foo.cpp";
-// CXXFLAGS = "-02";
-// TYPE = "library";
-// NAME = "test";
-
-

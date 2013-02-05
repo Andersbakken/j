@@ -2,8 +2,6 @@
 
 var fs = require('fs');
 var path = require('path');
-var foo = require('./foo');
-foo.foobar(1);
 
 var project;
 var generator = "ninja";

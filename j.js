@@ -59,6 +59,9 @@ if (project)
 
 function build(file, output, generator)
 {
+    var gen = require('./generators/' + generator);
+    if (!gen || !gen.generate || typeof gen.generate != "function")
+        throw "Invalid generator " + generator;
     var CXXFLAGS = "";
     var CFLAGS = "";
     var LDFLAGS = "";
@@ -75,7 +78,13 @@ function build(file, output, generator)
         builds.cxxflags = CFLAGS;
     if (typeof LDFLAGS == "string" && LDFLAGS.length)
         builds.cxxflags = LDFLAGS;
-    console.log(JSON.stringify(builds));
+    var out = gen.generate(builds);
+    if (typeof out == "string" && out.length) {
+        fs.writeFileSync(output);
+        console.log("Wrote output to " + output);
+    }
+    // console.log(JSON.stringify(builds));
+    // console.log(JSON.stringify(out));
 }
 // fs.readFile(file, [encoding], [callback]);
 

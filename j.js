@@ -2,6 +2,8 @@
 
 var fs = require('fs');
 var path = require('path');
+var foo = require('./foo');
+foo.foobar(1);
 
 for (var i=2; i<process.argv.length; ++i) {
     if (!build(process.argv[i]))
@@ -12,16 +14,15 @@ function build(file)
 {
     var SOURCES = "";
     var CXXFLAGS = "";
+    var CFLAGS = "";
+    var LDFLAGS = "";
     var TYPE = "app";
     var NAME = path.basename(file);
     if (NAME.length > 3 && NAME.substr(NAME.length - 3, 3) == ".js")
         NAME = NAME.substr(0, NAME.length - 3);
-    // console.log(NAME);
-    // console.log(file);
-    var contents = fs.readFileSync(file);
-    console.log(contents.toString());
+    var contents = fs.readFileSync(file).toString();
     try {
-        var ret = eval(contents.toString());
+        var ret = eval(contents);
     } catch (err) {
         console.log("Caught exception in " + file);
         return false;
@@ -43,13 +44,18 @@ function build(file)
 
     if (typeof CXXFLAGS == "string")
         CXXFLAGS = CXXFLAGS.split(/ +/);
+    if (typeof CFLAGS == "string")
+        CFLAGS = CFLAGS.split(/ +/);
+    if (typeof LDFLAGS == "string")
+        LDFLAGS = LDFLAGS.split(/ +/);
 
     if (!NAME.length)
         throw "Invalid target NAME";
-    console.log(SOURCES);
     var target = { NAME: NAME,
                    SOURCES: sources,
                    CXXFLAGS: CXXFLAGS,
+                   CFLAGS: CXXFLAGS,
+                   LDFLAGS: CXXFLAGS,
                    TYPE: TYPE };
     console.log(JSON.stringify(target));
 }

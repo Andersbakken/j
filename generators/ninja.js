@@ -2,10 +2,14 @@
 
 function NinjaInternals()
 {
-    this._rule = function(name, command, flags) {
+    this._compileRule = function(name, command, flags) {
         return "rule " + name + "\n" +
                "  depfile = $out.d\n" +
-               "  command = " + command + " $" + flags + " -c $in -o $out -MMD -MF $out.d\n";
+               "  command = " + command + " $" + flags + " $in -o $out -MMD -MF $out.d\n";
+    };
+    this._linkRule = function(name, command, flags) {
+        return "rule " + name + "\n" +
+            "  command = " + command + " $" + flags + " $in -o $out\n";
     };
     this._build = function(t) {
         var o = [];
@@ -17,7 +21,7 @@ function NinjaInternals()
             return "";
         }
         if (r === "cxx")
-            this.linker = "cxx";
+            this.linker = "cxxlink";
 
         o.push("build " + tn + ": " + r + " " + t.source);
         for (var i in t.flags) {
@@ -45,7 +49,7 @@ function NinjaInternals()
         return rule;
     };
     this._rules = { ".cpp": "cxx", ".cxx": "cxx", ".cc": "cxx", ".c": "cc" };
-    this.linker = "cc";
+    this.linker = "cclink";
 };
 
 module.exports = {
@@ -65,8 +69,10 @@ module.exports = {
             o.push("ldflags = " + obj.ldflags);
         var cxx = obj.cxx || "g++";
         var cc = obj.cc || "gcc";
-        o.push(nin._rule("cxx", cxx, "cxxflags"));
-        o.push(nin._rule("cc", cc, "cflags"));
+        o.push(nin._compileRule("cxx", cxx, "cxxflags -c"));
+        o.push(nin._compileRule("cc", cc, "cflags -c"));
+        o.push(nin._linkRule("cclink", cc, "ldflags"));
+        o.push(nin._linkRule("cxxlink", cxx, "ldflags"));
         for (i in obj.targets) {
             var t = obj.targets[i];
             var all = "";
@@ -74,10 +80,10 @@ module.exports = {
                 var source = t.sources[s];
                 if (typeof source === "string") {
                     o.push(nin._build({source: source}));
-                    all += source + " ";
+                    all += source + ".o ";
                 } else if (typeof source === "object") {
                     o.push(nin._build({source: source.source, flags: { cxxflags: source.cxxflags, cflags: source.cflags }}));
-                    all += source.source + " ";
+                    all += source.source + ".o ";
                 }
             }
             o.push(nin._build({source: all, flags: { ldflags: source.ldflags }, rule: nin.linker, target: t.name}));

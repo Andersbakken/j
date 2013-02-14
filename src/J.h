@@ -3,17 +3,12 @@
 
 #include <rct/String.h>
 #include <rct/List.h>
-
-class Target
-{
-public:
-
-};
+#include <rct/Path.h>
 
 class Source
 {
 public:
-    Source(const Path &file) : mSource(file) {}
+    Source(const Path &file = Path()) : mSource(file) {}
 
     enum FlagsMode {
         IncludeStandard,
@@ -32,6 +27,25 @@ private:
     Path mSource;
     List<Path> mFlags;
     FlagsMode mFlagsMode;
+};
+
+class Target
+{
+public:
+    enum Type {
+        Library,
+        Application
+    };
+    Target(const String &name, Type type) : mName(name), mType(type) {}
+    void addSource(const Source &source) { mSources.append(source); }
+    List<Source> sources() const { return mSources; }
+    void addDependency(const String &name) { mDependencies.append(name); }
+    List<String> dependencies() const { return mDependencies; }
+private:
+    String mName;
+    Type mType;
+    List<Source> mSources;
+    List<String> mDependencies;
 };
 
 class J

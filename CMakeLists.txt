@@ -5,4 +5,8 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/rct/src/ ${CMAKE_CURRENT_SOURCE_
 add_definitions(-DJ_ROOT="${CMAKE_CURRENT_SOURCE_DIR}")
 add_executable(j src/main.cpp)
 add_dependencies(j rct)
-target_link_libraries(j ${CMAKE_CURRENT_SOURCE_DIR}/rct/librct.a -lpthread -lrt -ldl)
+
+if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+  set(JLIBS -lpthread -lrt -ldl)
+endif()
+target_link_libraries(j ${CMAKE_CURRENT_SOURCE_DIR}/rct/librct.a ${JLIBS})

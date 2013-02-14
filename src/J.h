@@ -36,7 +36,7 @@ public:
         Library,
         Application
     };
-    Target(const String &name, Type type) : mName(name), mType(type) {}
+    Target(const String &name = String(), Type type = Library) : mName(name), mType(type) {}
     void addSource(const Source &source) { mSources.append(source); }
     List<Source> sources() const { return mSources; }
     void addDependency(const String &name) { mDependencies.append(name); }

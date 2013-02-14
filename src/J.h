@@ -4,6 +4,7 @@
 #include <rct/String.h>
 #include <rct/List.h>
 #include <rct/Path.h>
+#include <rct/Log.h>
 
 class Source
 {
@@ -29,6 +30,24 @@ private:
     FlagsMode mFlagsMode;
 };
 
+inline Log operator<<(Log log, const Source &source)
+{
+    String out = "Source(";
+    out += source.sourceFile();
+    if (!source.flags().isEmpty()) {
+        out += ", ";
+        if (source.flagsMode() == Source::IncludeStandard) {
+            out += "include: ";
+        } else {
+            out += "exclude: ";
+        }
+        out += String::join(source.flags(), " ");
+    }
+    out += ")";
+    log << out;
+    return log;
+}
+
 class Target
 {
 public:
@@ -41,6 +60,8 @@ public:
     List<Source> sources() const { return mSources; }
     void addDependency(const String &name) { mDependencies.append(name); }
     List<String> dependencies() const { return mDependencies; }
+    Type type() const { return mType; }
+    String name() const { return mName; }
 private:
     String mName;
     Type mType;
@@ -48,11 +69,25 @@ private:
     List<String> mDependencies;
 };
 
+inline Log operator<<(Log log, const Target &target)
+{
+    String out = "Target(" + target.name() + ", ";
+    out += target.type() == Target::Library ? "lib, " : "app, ";
+    log << out;
+    log << target.sources() << "dependencies" << target.dependencies();
+    return log;
+}
+
 class J
 {
 public:
     List<Target> targets;
 };
 
+inline Log operator<<(Log log, const J &j)
+{
+    log << j.targets;
+    return log;
+}
 
 #endif
